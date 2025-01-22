@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createConnection } from '@/lib/db.js';
+import { createConnection } from '@/lib/db';
 import { FormResponse, TextAnswer, OptionAnswer } from '@/types/form';
 
 export async function POST(request: Request, { params }: { params: { formId: string } }) {

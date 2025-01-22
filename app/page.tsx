@@ -202,13 +202,12 @@ function FormBuilder({
         publish_token: data.publish_token,
       }
       setFormData(updatedForm)
-      onFormUpdate(updatedForm)
-      onPublish(publishedLink)
-      setPublishedLink(publishedLink)
-      toast({
-        title: "Success",
-        description: "Form published successfully!",
-      })
+      onFormUpdate(updatedForm);
+onPublish(publishedLink);
+toast({
+  title: "Success",
+  description: "Form published successfully!",
+});
     } catch (error) {
       toast({
         title: "Error",
@@ -589,10 +588,11 @@ function ResponseList({ formWithResponses }: { formWithResponses: FormWithRespon
         {formWithResponses.published ? (
           <div className="text-sm text-gray-500">Form URL has been generated and is ready to be shared</div>
         ) : (
-          <Alert variant="info" className="max-w-md">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>Publish your form to start collecting responses</AlertDescription>
-          </Alert>
+         <Alert className="max-w-md bg-blue-100 text-blue-700">
+  <AlertCircle className="h-4 w-4" />
+  <AlertDescription>Publish your form to start collecting responses</AlertDescription>
+</Alert>
+
         )}
       </CardContent>
     </Card>
@@ -650,33 +650,41 @@ function ResponseList({ formWithResponses }: { formWithResponses: FormWithRespon
                 </ul>
               ) : (
                 <ul className="space-y-3">
-                  {question.options?.map((option) => {
-                    const count = formWithResponses.responses.filter((response) =>
-                      response.answers.some(
-                        (a) =>
-                          a.question_id === question.id &&
-                          ((a as OptionAnswer).option_id === option.id ||
-                            (a as OptionAnswer).option_id?.includes(option.id)),
-                      ),
-                    ).length
-                    const percentage = (count / formWithResponses.responses.length) * 100 || 0
-                    return (
-                      <li key={option.id}>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium">{option.option_text}</span>
-                          <span className="text-sm text-gray-500">{count} responses</span>
-                        </div>
-                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-blue-500 transition-all duration-500"
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-gray-500">{percentage.toFixed(1)}%</span>
-                      </li>
-                    )
-                  })}
-                </ul>
+  {question.options?.map((option) => {
+    // Calculate the count of responses for this option
+    const count = formWithResponses.responses.filter((response) =>
+      response.answers.some((a) => {
+        const optionId = (a as OptionAnswer).option_id;
+        return (
+          a.question_id === question.id &&
+          (Array.isArray(optionId)
+            ? optionId.includes(option.id)
+            : optionId === option.id)
+        );
+      }),
+    ).length;
+
+    // Calculate percentage
+    const percentage = (count / formWithResponses.responses.length) * 100 || 0;
+
+    return (
+      <li key={option.id}>
+        <div className="flex justify-between mb-1">
+          <span className="text-sm font-medium">{option.option_text}</span>
+          <span className="text-sm text-gray-500">{count} responses</span>
+        </div>
+        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-blue-500 transition-all duration-500"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+        <span className="text-xs text-gray-500">{percentage.toFixed(1)}%</span>
+      </li>
+    );
+  })}
+</ul>
+
               )}
             </CardContent>
           </Card>
